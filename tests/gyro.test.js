@@ -1,0 +1,27 @@
+const src = require('fs').readFileSync(process.argv[2] || require('path').join(__dirname, '..', 'index.js'), 'utf8');
+const a = src.indexOf('  var ROLL_SIGN'), b = src.indexOf('  function screenOrientationAngle');
+const orientationToView = new Function(src.slice(a, b) + '; return orientationToView;')();
+const D = Math.PI / 180, near = (x, y) => Math.abs(x - y) < 1e-9;
+let ok = true; const check = (n, c) => { console.log((c ? 'PASS ' : 'FAIL ') + n); ok = ok && c; };
+const v = (...args) => orientationToView(...args);
+let r = v(0, 90, 0, 0);
+check('portrait upright facing north -> yaw 0, pitch 0, roll 0', near(r.yaw, 0) && near(r.pitch, 0) && near(r.roll, 0));
+// Cardboard pose: landscape (screen angle 90, top of phone to the left), facing east.
+r = v(0, 0, -90, 90);
+check('cardboard facing east -> yaw +90deg, level', near(r.yaw, 90 * D) && near(r.pitch, 0) && near(r.roll, 0));
+r = v(30, 0, -90, 90);
+check('turn head left 30deg -> yaw decreases 30deg', near(r.yaw, 60 * D) && near(r.pitch, 0));
+r = v(-30, 0, -90, 90);
+check('turn head right 30deg -> yaw increases 30deg', near(r.yaw, 120 * D));
+r = v(0, 0, -70, 90);
+check('tilt head down 20deg -> pitch +20deg (Marzipano down)', near(r.pitch, 20 * D) && near(r.yaw, 90 * D) && near(r.roll, 0));
+r = v(0, 0, -110, 90);
+check('tilt head up 20deg -> pitch -20deg', near(r.pitch, -20 * D) && near(r.yaw, 90 * D));
+r = v(0, 17, -90, 90);
+check('roll head clockwise 17deg -> |roll| 17deg, heading/pitch unchanged', near(Math.abs(r.roll), 17 * D) && near(r.yaw, 90 * D) && near(r.pitch, 0));
+console.log('  roll value for clockwise head roll:', r.roll.toFixed(4));
+// Other landscape side (screen angle 270 / -90, top of phone to the right) facing west.
+r = v(0, 0, 90, 270);
+check('landscape-secondary facing west -> yaw -90deg level', near(r.yaw, -90 * D) && near(r.pitch, 0) && near(r.roll, 0));
+check('looking straight down returns null (no heading)', v(0, 0, 0, 0) === null);
+console.log(ok ? '\nALL PASS' : '\nFAILURES'); process.exit(ok ? 0 : 1);

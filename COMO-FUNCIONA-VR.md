@@ -57,16 +57,16 @@ Abrís la página en el celular, tocás **"Ver en VR"**, ponés el celular en el
 ### Cómo poner la página en `https://`
 
 **Opción A: publicarla (recomendada para usar en el instituto).**
-Subí el contenido de la carpeta `app-files` a cualquier hosting estático con https, por ejemplo:
+La versión publicada está en **https://tecno-3.vercel.app** (Vercel publica la raíz del repositorio `tecno-3`). Para publicarla en otro lado, subí los archivos de la raíz a cualquier hosting estático con https, por ejemplo:
 
-- **Netlify Drop** (`app.netlify.com/drop`): arrastrás la carpeta `app-files` y te da un link `https://…`.
+- **Netlify Drop** (`app.netlify.com/drop`): arrastrás la carpeta del sitio y te da un link `https://…`.
 - **GitHub Pages**.
 
 **Opción B: prueba rápida desde tu Mac, sin publicar nada.**
 Levantá el servidor local y abrí un túnel https temporal:
 
 ```bash
-cd ~/Downloads/"project-title (1)"/app-files && python3 -m http.server 8360
+cd tecno-3 && python3 -m http.server 8360
 ```
 
 En otra terminal (requiere `brew install cloudflared` la primera vez):
@@ -88,15 +88,16 @@ Te muestra una dirección `https://…trycloudflare.com`. Abrila en el celular. 
 
 ## 5. Cómo está construido
 
-El tour es una exportación de **Marzipano** (visor 360° de Google). No usa frameworks: son archivos HTML, CSS y JavaScript dentro de `app-files/`. Todo lo nuevo está en esos mismos archivos.
+El tour es una exportación de **Marzipano** (visor 360° de Google). No usa frameworks: son archivos HTML, CSS y JavaScript dentro de `app-files/`. En el repositorio, esos archivos están directamente en la raíz para que Vercel los publique.
 
 ```
-app-files/
+(raíz del repositorio = la web publicada)
 ├── index.html   → botón "Ver en VR", capa de VR (dos ojos, salir, avisos), barras de cuenta regresiva
 ├── style.css    → estilos de la barra de cuenta regresiva y del modo VR
 ├── index.js     → lógica: pase automático, giroscopio, pantalla partida
 ├── data.js      → lista de imágenes (sin cambios)
 └── vendor/      → librerías Marzipano y screenfull (sin cambios)
+├── img/, tiles/ → íconos e imágenes 360°
 tests/
 ├── idle.test.js → pruebas del temporizador de 8 s
 └── gyro.test.js → pruebas de la matemática del giroscopio
@@ -152,7 +153,7 @@ tests/
 ### En la computadora
 
 ```bash
-cd ~/Downloads/"project-title (1)"/app-files && python3 -m http.server 8360
+cd tecno-3 && python3 -m http.server 8360
 ```
 
 Abrí `http://localhost:8360` y probá:
@@ -168,7 +169,7 @@ Para simular el giroscopio en Chrome: DevTools → menú ⋮ → *More tools* �
 ### Pruebas automáticas
 
 ```bash
-cd ~/Downloads/"project-title (1)" && node tests/idle.test.js && node tests/gyro.test.js
+cd tecno-3 && node tests/idle.test.js && node tests/gyro.test.js
 ```
 
 - `idle.test.js`: 19 pruebas con reloj simulado (cambio a los 8000 ms exactos, reinicio con cada evento, pausa, pestaña oculta, limpieza).
