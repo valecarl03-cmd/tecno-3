@@ -216,8 +216,10 @@ Cada imagen tiene dos datos distintos:
 Ejemplo correcto en `index.html`:
 
 ```html
-<a href="javascript:void(0)" class="scene" data-id="0-whatsapp-image-2026-10-12-at-121339">   ← no tocar
-  <li class="text">Campamento a orillas del río</li>                                         ← nombre visible
+<!-- data-id: NO TOCAR -->
+<a href="javascript:void(0)" class="scene" data-id="0-whatsapp-image-2026-10-12-at-121339">
+  <!-- nombre visible: se puede cambiar -->
+  <li class="text">Campamento a orillas del río</li>
 </a>
 ```
 
