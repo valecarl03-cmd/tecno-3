@@ -28,6 +28,7 @@ La web es un **tour de imágenes 360°** con dos formas de verlo:
 | 2 | **Modo VR para Cardboard** | Botón "Ver en VR": pantalla partida para los dos ojos, seguimiento de cabeza con el giroscopio y pase automático cada 8 s. |
 | 3 | **Corrección de la publicación en Vercel** | La web daba **404**: el repositorio tenía solo un `.zip` y Vercel no lo descomprime. Los archivos se movieron a la raíz del repositorio. |
 | 4 | **VR siempre horizontal** | Con el bloqueo de rotación activado, la división quedaba arriba/abajo. Ahora la vista VR se arma siempre en horizontal, una mitad por ojo, aunque el navegador no gire. |
+| 5 | **Reparación de la lista de imágenes** | Una edición desde GitHub cambió los `data-id` a `"."` y la web quedaba en negro. Se restauraron los códigos y se mantuvieron los nombres `"."` elegidos. |
 
 ---
 
@@ -200,8 +201,25 @@ Los sentidos se verificaron contra la librería: girar a la derecha aumenta el y
 |---|---|---|
 | Segundos entre imágenes | `index.js` línea 40: `IDLE_AUTOPLAY_DELAY` | `8000` (8 s) |
 | Campo visual en el visor | `index.js` línea 554: `VR_FOV` | `Math.PI / 2` (90°). Más alto = más amplio y más chico |
-| Nombres de las imágenes | `data.js` (`"name"`) e `index.html` (lista de escenas) | Por ahora son nombres de archivo de WhatsApp: conviene cambiarlos |
+| Nombres de las imágenes | Ver "Cómo cambiar los nombres", abajo | Lista: "."; título y visor VR: nombres de archivo de WhatsApp |
 | Título de la pestaña | `index.html` (`<title>`) | "Project Title" |
+
+### Cómo cambiar los nombres de las imágenes (sin romper la web)
+
+Cada imagen tiene dos datos distintos:
+
+- **`data-id`** (en `index.html`) e **`"id"`** (en `data.js`): es el **código interno** que conecta cada botón de la lista con su imagen. **No se modifica nunca.** Si cambia, la web queda en negro: ya pasó una vez, cuando se cambió a `"."`.
+- **El nombre visible**, que se cambia en dos lugares:
+  1. **Lista de imágenes:** el texto dentro de `<li class="text">…</li>` en `index.html`.
+  2. **Título superior y cartel dentro del visor VR:** el valor `"name"` de cada imagen en `data.js`.
+
+Ejemplo correcto en `index.html`:
+
+```html
+<a href="javascript:void(0)" class="scene" data-id="0-whatsapp-image-2026-10-12-at-121339">   ← no tocar
+  <li class="text">Campamento a orillas del río</li>                                         ← nombre visible
+</a>
+```
 
 ---
 
@@ -271,6 +289,7 @@ Abrir `http://localhost:8360`. Para simular el giroscopio en Chrome: DevTools �
 | Síntoma | Causa | Solución |
 |---|---|---|
 | La web muestra "404 NOT_FOUND" | Se subió un `.zip` o `index.html` no está en la raíz | Ver sección 8 |
+| La web carga pero queda **en negro**, sin imagen | Se modificó un `data-id` en `index.html` o un `"id"` en `data.js` | Restaurar los códigos originales (sección 7, "Cómo cambiar los nombres") |
 | La pantalla se parte pero la imagen no sigue la cabeza | Página sin `https://` | Usar https://tecno-3.vercel.app |
 | Aviso "Sin permiso para el sensor de movimiento" (iPhone) | Se tocó "No permitir" | Cerrar la pestaña, abrir la página otra vez y tocar "Permitir" |
 | Aviso "No se detecta el giroscopio" | Computadora o celular sin sensor | Probar en otro celular |
