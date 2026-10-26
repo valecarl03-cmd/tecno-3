@@ -570,6 +570,12 @@
   var vrNoticeTimer = null;
   var vrWakeLock = null;
   var vrOwnsFullscreen = false;
+  // Rotation (degrees) applied to the VR view when the page itself stays in
+  // portrait, e.g. with the phone's rotation lock on. 0 when the browser
+  // already lays the page out in landscape.
+  var vrForcedAngle = 0;
+  var vrLayoutWidth = 0;
+  var vrLayoutHeight = 0;
 
   function rotX(t) {
     var c = Math.cos(t), s = Math.sin(t);
@@ -638,6 +644,66 @@
     return 0;
   }
 
+  // Screen rotation the head-tracking math must assume: the forced rotation
+  // when the VR view is drawn sideways, otherwise the browser's own.
+  function vrScreenAngle() {
+    return vrForcedAngle || screenOrientationAngle();
+  }
+
+  // Which way the phone is turned, from gravity: 90 when its top points left
+  // (right edge up), -90 when its top points right. null while the phone is
+  // closer to flat or upright, so the layout does not flicker.
+  function landscapeSideFromSensor(reading) {
+    var rightEdgeUp = -Math.cos(reading.beta * DEG) * Math.sin(reading.gamma * DEG);
+    if (rightEdgeUp > 0.5) {
+      return 90;
+    }
+    if (rightEdgeUp < -0.5) {
+      return -90;
+    }
+    return null;
+  }
+
+  // The Cardboard split must run along the long side of the phone (one half
+  // per eye). If the page stays in portrait while the phone is held sideways,
+  // draw the view and overlay rotated a quarter turn so they fill the screen
+  // in landscape anyway.
+  function updateVrLayout() {
+    var angle = 0;
+    if (vrActive && window.innerHeight > window.innerWidth) {
+      var side = vrOrientation ? landscapeSideFromSensor(vrOrientation) : null;
+      angle = side !== null ? side : (vrForcedAngle || 90);
+    }
+    if (angle === vrForcedAngle && window.innerWidth === vrLayoutWidth &&
+        window.innerHeight === vrLayoutHeight) {
+      return;
+    }
+    vrForcedAngle = angle;
+    vrLayoutWidth = window.innerWidth;
+    vrLayoutHeight = window.innerHeight;
+
+    [panoElement, vrOverlayElement].forEach(function(el) {
+      var style = el.style;
+      if (angle) {
+        style.top = '50%';
+        style.left = '50%';
+        style.right = 'auto';
+        style.bottom = 'auto';
+        style.width = window.innerHeight + 'px';
+        style.height = window.innerWidth + 'px';
+        style.webkitTransform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
+        style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
+      } else {
+        style.top = style.left = style.right = style.bottom = '';
+        style.width = style.height = '';
+        style.webkitTransform = style.transform = '';
+      }
+    });
+    // Marzipano only measures its container on window resize.
+    viewer.updateSize();
+    vrOrientationDirty = true;
+  }
+
   function handleDeviceOrientation(event) {
     if (event.alpha == null && event.beta == null && event.gamma == null) {
       return;
@@ -650,6 +716,7 @@
     }
     vrOrientation = { alpha: event.alpha || 0, beta: event.beta || 0, gamma: event.gamma || 0 };
     vrOrientationDirty = true;
+    updateVrLayout();
   }
 
   // Applies the latest sensor reading once per frame.
@@ -660,7 +727,7 @@
     }
     vrOrientationDirty = false;
     var head = orientationToView(vrOrientation.alpha, vrOrientation.beta,
-                                 vrOrientation.gamma, screenOrientationAngle());
+                                 vrOrientation.gamma, vrScreenAngle());
     if (!head) {
       return;
     }
@@ -798,6 +865,8 @@
 
     vrOrientation = null;
     vrNeedsCalibration = true;
+    updateVrLayout();
+    window.addEventListener('resize', updateVrLayout);
     window.addEventListener('deviceorientation', handleDeviceOrientation);
     vrFrame = requestAnimationFrame(renderVrFrame);
     acquireWakeLock();
@@ -826,6 +895,7 @@
       return;
     }
     vrActive = false;
+    window.removeEventListener('resize', updateVrLayout);
     window.removeEventListener('deviceorientation', handleDeviceOrientation);
     cancelAnimationFrame(vrFrame);
     vrFrame = null;
@@ -835,6 +905,7 @@
     releaseWakeLock();
 
     setStereo(false);
+    updateVrLayout();
     document.body.classList.remove('vr-active');
     vrOverlayElement.setAttribute('aria-hidden', 'true');
     controls.enable();

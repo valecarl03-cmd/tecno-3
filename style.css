@@ -299,7 +299,6 @@ body.vr-active #vrToggle {
   white-space: nowrap;
 }
 
-#vrRotateHint,
 #vrNotice {
   position: absolute;
   left: 50%;
@@ -316,11 +315,6 @@ body.vr-active #vrToggle {
   pointer-events: none;
 }
 
-#vrRotateHint {
-  display: none;
-  top: 50%;
-}
-
 #vrNotice {
   top: 80%;
   opacity: 0;
@@ -332,12 +326,6 @@ body.vr-active #vrToggle {
   opacity: 1;
 }
 
-/* The split view only works in landscape; ask the user to rotate. */
-@media (orientation: portrait) {
-  body.vr-active.touch #vrRotateHint {
-    display: block;
-  }
-}
 
 #fullscreenToggle {
   display: none;
