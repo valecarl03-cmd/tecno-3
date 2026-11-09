@@ -63,13 +63,15 @@ Cada tarjeta es un plano fijo en un punto del paisaje 360°, siempre de frente a
 
 | Escena | Tarjeta | yaw (horizontal) | pitch (vertical) | Ancho | Dónde queda |
 |---|---|---|---|---|---|
-| 360 1ra | Bernegal | **+72,5°** (derecha) | **−23,4°** (arriba del horizonte) | **61,2°** | Sobre el río y los hombres con lanzas, igual que en la referencia |
-| 2daa | Mate de plata | **+108°** (derecha) | **−26°** | **61,2°** | En el cielo, pasando la iglesia, para no tapar el campanario |
-| 360 3ra | Mate imperial | **−60°** (izquierda) | **−30°** | **61,2°** | En el cielo sobre el grupo que toma mate. A la derecha taparía las torres de la catedral |
+| 360 1ra | Bernegal | **+72,5°** (derecha) | **−8°** | **61,2°** | Hacia el río, en la misma dirección que la referencia. Tapa la parte de arriba de los hombres con lanzas |
+| 2daa | Mate de plata | **+108°** (derecha) | **−8°** | **61,2°** | Pasando la iglesia, para no tapar el campanario |
+| 360 3ra | Mate imperial | **−60°** (izquierda) | **−8°** | **61,2°** | Sobre el grupo que toma mate. A la derecha taparía la catedral |
+
+**Altura:** las tres tarjetas están a **−8°**, apenas arriba de la altura de los ojos. Se leen con la cabeza derecha, mirando hacia adelante, sin levantar la vista. Es el ajuste que se pidió después de la primera prueba; en la referencia estaban a −23° y había que mirar hacia arriba. A esta altura, la tarjeta tapa parte de lo que hay en el horizonte de cada escena. La altura se cambia en una sola línea: `CARD_PITCH` en `js/config.js`.
 
 **De dónde salen estos valores:**
-- **Escena 1:** se calcularon comparando "referencia imagen flotante" con el panorama original, con una coincidencia del 98,6%. La referencia es un recorte del panorama "360 1ra". La tarjeta ocupa 66,7° de ancho a −23,4° de altura, lo que equivale a **66,7° × cos(23,4°) = 61,2°** vistos por el usuario. El alto sale de la proporción de la imagen (~37°).
-- **Escenas 2 y 3:** solo hay referencia para la escena 1, así que usan el mismo tamaño y una altura similar, en el lugar libre más cercano.
+- **Tamaño y dirección:** se calcularon comparando "referencia imagen flotante" con el panorama original, con una coincidencia del 98,6%. La referencia es un recorte del panorama "360 1ra". La tarjeta ocupa 66,7° de ancho a −23,4° de altura, lo que equivale a **66,7° × cos(23,4°) = 61,2°** vistos por el usuario. El alto sale de la proporción de la imagen (~37°).
+- **Escenas 2 y 3:** solo hay referencia para la escena 1, así que usan el mismo tamaño, en el lugar libre más cercano.
 - **El ángulo yaw** se cuenta desde el frente de cada escena, que es donde está mirando el usuario cuando la escena empieza.
 - **En la pantalla de un ojo,** mirándola de frente, la tarjeta ocupa ~55% del ancho.
 

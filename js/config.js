@@ -32,7 +32,10 @@ const CARD_WIDTH_DEG = 61.2;
 // The card is anchored in the scene: `yaw` in degrees from the scene's
 // front (positive = right), `pitch` in degrees (negative = above the
 // horizon). The front is wherever the user is looking when the scene starts.
+// Cards sit just above eye level, so they are read with the head level,
+// without looking up.
 // `cleanMs` is the time with the bare 360, `cardMs` the time with the card.
+const CARD_PITCH = -8;
 export const SCENES = [
   {
     panorama: 'assets/img/360/360-1ra.jpg',
@@ -41,9 +44,9 @@ export const SCENES = [
     card: {
       image: 'assets/img/flotantes/flotante-bernegal.png',
       alt: 'Bernegal. Tazón de cerámica.',
-      // Exactly as in the reference: over the river, above the spearmen.
+      // Same direction as in the reference: over the river and the spearmen.
       yaw: 72.5,
-      pitch: -23.4,
+      pitch: CARD_PITCH,
       widthDeg: CARD_WIDTH_DEG,
     },
     cleanMs: 8000,
@@ -58,7 +61,7 @@ export const SCENES = [
       alt: 'Mate de plata. Calabaza y plata.',
       // Right side, past the church so its bell tower stays visible.
       yaw: 108,
-      pitch: -26,
+      pitch: CARD_PITCH,
       widthDeg: CARD_WIDTH_DEG,
     },
     cleanMs: 8000,
@@ -71,10 +74,10 @@ export const SCENES = [
     card: {
       image: 'assets/img/flotantes/flotante-mate-imperial.png',
       alt: 'Mate imperial. Calabaza y cuero.',
-      // Left side, in the sky above the group drinking mate; on the right
-      // it would cover the cathedral towers.
+      // Left side, above the group drinking mate; on the right it would
+      // cover the cathedral.
       yaw: -60,
-      pitch: -30,
+      pitch: CARD_PITCH,
       widthDeg: CARD_WIDTH_DEG,
     },
     cleanMs: 8000,
