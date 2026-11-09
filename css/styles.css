@@ -1,0 +1,201 @@
+:root {
+  --fade-ms: 800ms;
+  --float-fade-ms: 1000ms;
+  --cream: #f3e8da;
+  --brown: #7a260c;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #000;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Fills the window. In portrait, js/stage.js turns it into a rotated
+   landscape box centered on the screen. */
+.app {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.app.is-rotated {
+  top: 50%;
+  left: 50%;
+}
+
+/* Screens cross-fade: the outgoing one fades out while the next fades in. */
+.screen {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--fade-ms) ease, visibility 0s linear var(--fade-ms);
+}
+
+.screen.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity var(--fade-ms) ease, visibility 0s;
+}
+
+/* Static screens: the image is scaled to fit (never cropped), and the
+   clickable areas are positioned in % of the image, so they stay on top of
+   the drawn buttons at any screen size. */
+.screen-static {
+  display: grid;
+  place-items: center;
+  background: var(--cream);
+  container-type: size;
+}
+
+.screen-frame {
+  position: relative;
+  aspect-ratio: var(--ar, 2);
+  width: min(100cqw, calc(100cqh * var(--ar, 2)));
+}
+
+.screen-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.hotspot {
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.hotspot:active {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.hotspot:focus-visible {
+  outline: 3px solid var(--cream);
+  outline-offset: 2px;
+}
+
+/* 360 experience. */
+.screen-vr {
+  background: #000;
+}
+
+.pano {
+  position: absolute;
+  inset: 0;
+}
+
+/* Cardboard lens divider. */
+.pano.is-stereo::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: #000;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Floating images: static DOM above the canvas, one copy centered in each
+   eye so each lens sees it in the middle. The 360 keeps moving behind. */
+.floating-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  pointer-events: none;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity var(--float-fade-ms) ease, transform var(--float-fade-ms) ease;
+}
+
+.floating-layer.is-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.eye {
+  flex: 1 1 50%;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+
+.floating-layer.is-mono .eye-right {
+  display: none;
+}
+
+/* The floating cards carry text, so they take most of each eye to stay
+   readable through the lenses. The cards include their own shadow. */
+.floating-img {
+  display: block;
+  max-width: 88%;
+  max-height: 80%;
+  object-fit: contain;
+}
+
+.floating-layer.is-mono .floating-img {
+  max-width: 60%;
+}
+
+.vr-notice {
+  position: absolute;
+  left: 50%;
+  bottom: 12%;
+  z-index: 20;
+  max-width: 80%;
+  padding: 12px 18px;
+  border-radius: 12px;
+  background: rgba(20, 20, 20, 0.85);
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.4;
+  text-align: center;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.vr-notice.is-visible {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --float-fade-ms: 1ms;
+  }
+
+  .floating-layer {
+    transform: none;
+  }
+}
