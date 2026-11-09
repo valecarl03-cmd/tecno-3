@@ -1,5 +1,6 @@
 // Everything that defines the experience lives here: image paths, the
-// clickable areas on the static screens and the 360 timeline.
+// clickable areas on the static screens, where each card floats in the
+// 360 scenes and how long every part lasts.
 
 export const SCREENS = {
   inicio: {
@@ -20,41 +21,65 @@ export const SCREENS = {
   },
 };
 
-// 360 backgrounds (equirectangular, 2:1) and the floating image of each one.
+// Angular width of every card. Measured on "referencia imagen flotante":
+// the card spans 66.7° of yaw at pitch -23.4°, i.e. 66.7° × cos(23.4°)
+// = 61.2° as seen by the viewer. Height follows the image's proportions.
+const CARD_WIDTH_DEG = 61.2;
+
+// 360 backgrounds (equirectangular, 2:1) and the floating card of each one.
 // `width` is the panorama's width in pixels; 4096 works on every phone.
+// `initialYaw` (degrees) is the part of the panorama shown as the front.
+// The card is anchored in the scene: `yaw` in degrees from the scene's
+// front (positive = right), `pitch` in degrees (negative = above the
+// horizon). The front is wherever the user is looking when the scene starts.
+// `cleanMs` is the time with the bare 360, `cardMs` the time with the card.
 export const SCENES = [
   {
     panorama: 'assets/img/360/360-1ra.jpg',
     width: 4096,
     initialYaw: 0,
-    floating: 'assets/img/flotantes/flotante-bernegal.png',
-    floatingAlt: 'Bernegal',
+    card: {
+      image: 'assets/img/flotantes/flotante-bernegal.png',
+      alt: 'Bernegal. Tazón de cerámica.',
+      // Exactly as in the reference: over the river, above the spearmen.
+      yaw: 72.5,
+      pitch: -23.4,
+      widthDeg: CARD_WIDTH_DEG,
+    },
+    cleanMs: 8000,
+    cardMs: 25000, // 48 words
   },
   {
     panorama: 'assets/img/360/2daa.jpg',
     width: 4096,
     initialYaw: 0,
-    floating: 'assets/img/flotantes/flotante-mate-de-plata.png',
-    floatingAlt: 'Mate de plata',
+    card: {
+      image: 'assets/img/flotantes/flotante-mate-de-plata.png',
+      alt: 'Mate de plata. Calabaza y plata.',
+      // Right side, past the church so its bell tower stays visible.
+      yaw: 108,
+      pitch: -26,
+      widthDeg: CARD_WIDTH_DEG,
+    },
+    cleanMs: 8000,
+    cardMs: 22000, // 40 words
   },
   {
     panorama: 'assets/img/360/360-3ra.jpg',
     width: 4096,
     initialYaw: 0,
-    floating: 'assets/img/flotantes/flotante-mate-imperial.png',
-    floatingAlt: 'Mate imperial',
+    card: {
+      image: 'assets/img/flotantes/flotante-mate-imperial.png',
+      alt: 'Mate imperial. Calabaza y cuero.',
+      // Left side, in the sky above the group drinking mate; on the right
+      // it would cover the cathedral towers.
+      yaw: -60,
+      pitch: -30,
+      widthDeg: CARD_WIDTH_DEG,
+    },
+    cleanMs: 8000,
+    cardMs: 24000, // 46 words
   },
-];
-
-// Milliseconds from the moment "COMENZAR" is tapped.
-export const TIMELINE = [
-  { at: 0, type: 'scene', scene: 0 },
-  { at: 10000, type: 'floating', scene: 0 },
-  { at: 20000, type: 'scene', scene: 1 },
-  { at: 30000, type: 'floating', scene: 1 },
-  { at: 40000, type: 'scene', scene: 2 },
-  { at: 50000, type: 'floating', scene: 2 },
-  { at: 60000, type: 'end' },
 ];
 
 // Must match --fade-ms in css/styles.css.

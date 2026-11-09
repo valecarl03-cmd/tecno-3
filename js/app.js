@@ -1,12 +1,12 @@
-import { FADE_MS, SCENES, SCREENS, TIMELINE } from './config.js';
+import { FADE_MS, SCENES, SCREENS } from './config.js';
 import { createWakeLock, exitFullscreen, requestFullscreen, unlockOrientation } from './device.js';
 import { createMotionSensor, requestMotionPermission } from './orientation.js';
 import { createScreens, setupStaticScreen } from './screens.js';
 import { createLandscapeStage } from './stage.js';
-import { runTimeline } from './timeline.js';
+import { buildTimeline, runTimeline } from './timeline.js';
 import { createVrExperience } from './vr.js';
 
-// Testing aids: ?rapido runs the 60 s timeline in 12 s;
+// Testing aids: ?rapido runs the 360 timeline 5x faster;
 // ?modo=pantalla shows a single view instead of the Cardboard split.
 const params = new URLSearchParams(window.location.search);
 const SPEED = params.has('rapido') ? 0.2 : 1;
@@ -50,14 +50,14 @@ function startExperience() {
 
   const vr = createVrExperience({
     container: vrSection.querySelector('.pano'),
-    floatingLayer: vrSection.querySelector('.floating-layer'),
+    hintLayer: vrSection.querySelector('.hint-layer'),
     scenes: SCENES,
     stereo: STEREO,
     sensor,
     stage,
   });
 
-  const cancelTimeline = runTimeline(TIMELINE, (event) => {
+  const cancelTimeline = runTimeline(buildTimeline(SCENES), (event) => {
     if (event.type === 'scene') {
       vr.hideFloating();
       vr.showScene(event.scene);
@@ -112,7 +112,7 @@ setupStaticScreen(app.querySelector('[data-screen="cierre"]'), SCREENS.cierre);
 preload([
   SCREENS.confirmacion.image,
   SCREENS.cierre.image,
-  ...SCENES.flatMap((scene) => [scene.panorama, scene.floating]),
+  ...SCENES.flatMap((scene) => [scene.panorama, scene.card.image]),
 ]);
 
 document.documentElement.style.setProperty('--fade-ms', `${FADE_MS}ms`);

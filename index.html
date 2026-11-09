@@ -31,12 +31,19 @@
     </div>
   </section>
 
-  <!-- Phase 2: 360 experience. The floating layer sits above the canvas. -->
+  <!-- Phase 2: 360 experience. The cards are anchored in the 360 scene
+       (js/vr.js); the hint arrows sit fixed above it, one set per eye. -->
   <section class="screen screen-vr" data-screen="vr" aria-hidden="true">
     <div class="pano"></div>
-    <div class="floating-layer">
-      <div class="eye eye-left"><img class="floating-img" alt=""></div>
-      <div class="eye eye-right"><img class="floating-img" alt=""></div>
+    <div class="hint-layer" aria-hidden="true">
+      <div class="eye eye-left">
+        <span class="hint" data-side="left"></span>
+        <span class="hint" data-side="right"></span>
+      </div>
+      <div class="eye eye-right">
+        <span class="hint" data-side="left"></span>
+        <span class="hint" data-side="right"></span>
+      </div>
     </div>
     <div class="vr-notice" role="status"></div>
   </section>

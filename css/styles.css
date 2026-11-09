@@ -125,46 +125,105 @@ body {
   pointer-events: none;
 }
 
-/* Floating images: static DOM above the canvas, one copy centered in each
-   eye so each lens sees it in the middle. The 360 keeps moving behind. */
-.floating-layer {
+/* Cards anchored in the 360 scene. js/vr.js sets each card's width and
+   Marzipano its 3D transform; the cards include their own shadow. */
+.card-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.floating-card {
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--float-fade-ms) ease;
+  /* Own compositing layer, rasterized once at 1:1 (see fitCards). */
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.floating-card.is-visible {
+  opacity: 1;
+}
+
+.floating-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* "Turn this way" arrows: fixed in each eye, shown while the card is out
+   of sight. Kept away from the outer edges, which blur through the lenses. */
+.hint-layer {
   position: absolute;
   inset: 0;
   z-index: 10;
   display: flex;
   pointer-events: none;
-  opacity: 0;
-  transform: scale(0.96);
-  transition: opacity var(--float-fade-ms) ease, transform var(--float-fade-ms) ease;
-}
-
-.floating-layer.is-visible {
-  opacity: 1;
-  transform: scale(1);
 }
 
 .eye {
+  position: relative;
   flex: 1 1 50%;
-  display: grid;
-  place-items: center;
   min-width: 0;
 }
 
-.floating-layer.is-mono .eye-right {
+.hint-layer.is-mono .eye-right {
   display: none;
 }
 
-/* The floating cards carry text, so they take most of each eye to stay
-   readable through the lenses. The cards include their own shadow. */
-.floating-img {
-  display: block;
-  max-width: 88%;
-  max-height: 80%;
-  object-fit: contain;
+.hint {
+  position: absolute;
+  top: 50%;
+  width: 36px;
+  height: 36px;
+  margin-top: -18px;
+  border-radius: 50%;
+  background: rgba(243, 232, 218, 0.9);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-.floating-layer.is-mono .floating-img {
-  max-width: 60%;
+.hint::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-top: 3px solid var(--brown);
+  border-right: 3px solid var(--brown);
+}
+
+.hint[data-side="right"] {
+  right: 14%;
+}
+
+.hint[data-side="right"]::before {
+  transform: translate(-65%, -50%) rotate(45deg);
+}
+
+.hint[data-side="left"] {
+  left: 14%;
+}
+
+.hint[data-side="left"]::before {
+  transform: translate(-35%, -50%) rotate(-135deg);
+}
+
+.hint.is-visible {
+  opacity: 1;
+  animation: hint-nudge 1.4s ease-in-out infinite;
+}
+
+@keyframes hint-nudge {
+  50% { transform: translateX(var(--nudge, 6px)); }
+}
+
+.hint[data-side="left"] {
+  --nudge: -6px;
 }
 
 .vr-notice {
@@ -195,7 +254,7 @@ body {
     --float-fade-ms: 1ms;
   }
 
-  .floating-layer {
-    transform: none;
+  .hint.is-visible {
+    animation: none;
   }
 }
