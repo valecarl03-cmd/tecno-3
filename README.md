@@ -61,13 +61,20 @@ Si un archivo tiene otro nombre o formato (por ejemplo `.webp`), cambiá la ruta
 
 Cada tarjeta es un plano fijo en un punto del paisaje 360°, siempre de frente al usuario. Si el usuario no gira la cabeza hacia ella, no la ve. Se configura en `card` de cada escena, dentro de `js/config.js`.
 
-| Escena | Tarjeta | yaw (horizontal) | pitch (vertical) | Ancho | Dónde queda |
-|---|---|---|---|---|---|
-| 360 1ra | Bernegal | **+72,5°** (derecha) | **−8°** | **61,2°** | Hacia el río, en la misma dirección que la referencia. Tapa la parte de arriba de los hombres con lanzas |
-| 2daa | Mate de plata | **+108°** (derecha) | **−8°** | **61,2°** | Pasando la iglesia, para no tapar el campanario |
-| 360 3ra | Mate imperial | **−60°** (izquierda) | **−8°** | **61,2°** | Sobre el grupo que toma mate. A la derecha taparía la catedral |
+Todas las tarjetas están en **el mismo punto respecto del grupo de personas** de su escena, igual que en la referencia. La esquina inferior izquierda de la tarjeta queda arriba a la derecha del grupo: el borde izquierdo empieza 2,4° antes del borde derecho del grupo, y el borde inferior queda a la altura de las cabezas.
 
-**Altura:** las tres tarjetas están a **−8°**, apenas arriba de la altura de los ojos. Se leen con la cabeza derecha, mirando hacia adelante, sin levantar la vista. Es el ajuste que se pidió después de la primera prueba; en la referencia estaban a −23° y había que mirar hacia arriba. A esta altura, la tarjeta tapa parte de lo que hay en el horizonte de cada escena. La altura se cambia en una sola línea: `CARD_PITCH` en `js/config.js`.
+| Escena | Tarjeta | Grupo de personas (borde derecho · cabezas) | yaw | pitch | Ancho |
+|---|---|---|---|---|---|
+| 360 1ra | Bernegal | Ronda sentada (+44° · +9°) | **+72,5°** | **−8°** | **61,2°** |
+| 2daa | Mate de plata | Grupo en la mesa (+44° · +7°) | **+72,5°** | **−8°** | **61,2°** |
+| 360 3ra | Mate imperial | Jóvenes tomando mate (−21° · +20°) | **+7°** | **+4°** | **61,2°** |
+
+**Cómo leer estos valores:**
+- **yaw:** positivo es a la derecha del frente.
+- **pitch:** negativo es arriba del horizonte. Las tres tarjetas quedan cerca de la altura de los ojos y se leen sin levantar la cabeza.
+- **Escena 3:** los jóvenes están más cerca de la cámara y se ven más abajo, por eso su tarjeta también queda más baja.
+
+**Qué tapa cada tarjeta:** por esta regla, en la escena 2 la tarjeta tapa la iglesia y en la escena 3 la base del obelisco.
 
 **De dónde salen estos valores:**
 - **Tamaño y dirección:** se calcularon comparando "referencia imagen flotante" con el panorama original, con una coincidencia del 98,6%. La referencia es un recorte del panorama "360 1ra". La tarjeta ocupa 66,7° de ancho a −23,4° de altura, lo que equivale a **66,7° × cos(23,4°) = 61,2°** vistos por el usuario. El alto sale de la proporción de la imagen (~37°).

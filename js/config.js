@@ -32,10 +32,11 @@ const CARD_WIDTH_DEG = 61.2;
 // The card is anchored in the scene: `yaw` in degrees from the scene's
 // front (positive = right), `pitch` in degrees (negative = above the
 // horizon). The front is wherever the user is looking when the scene starts.
-// Cards sit just above eye level, so they are read with the head level,
-// without looking up.
+// Every card sits at the same spot relative to its scene's group of people,
+// as in the reference: its bottom-left corner at the group's top-right
+// (left edge 2.4° inside the group's right edge, bottom edge at head
+// height). That keeps the cards near eye level, read without looking up.
 // `cleanMs` is the time with the bare 360, `cardMs` the time with the card.
-const CARD_PITCH = -8;
 export const SCENES = [
   {
     panorama: 'assets/img/360/360-1ra.jpg',
@@ -44,9 +45,9 @@ export const SCENES = [
     card: {
       image: 'assets/img/flotantes/flotante-bernegal.png',
       alt: 'Bernegal. Tazón de cerámica.',
-      // Same direction as in the reference: over the river and the spearmen.
+      // Seated circle: right edge at yaw +44°, heads at pitch +9°.
       yaw: 72.5,
-      pitch: CARD_PITCH,
+      pitch: -8,
       widthDeg: CARD_WIDTH_DEG,
     },
     cleanMs: 8000,
@@ -59,9 +60,9 @@ export const SCENES = [
     card: {
       image: 'assets/img/flotantes/flotante-mate-de-plata.png',
       alt: 'Mate de plata. Calabaza y plata.',
-      // Right side, past the church so its bell tower stays visible.
-      yaw: 108,
-      pitch: CARD_PITCH,
+      // Group at the table: right edge at yaw +44°, heads at pitch +7°.
+      yaw: 72.5,
+      pitch: -8,
       widthDeg: CARD_WIDTH_DEG,
     },
     cleanMs: 8000,
@@ -74,10 +75,10 @@ export const SCENES = [
     card: {
       image: 'assets/img/flotantes/flotante-mate-imperial.png',
       alt: 'Mate imperial. Calabaza y cuero.',
-      // Left side, above the group drinking mate; on the right it would
-      // cover the cathedral.
-      yaw: -60,
-      pitch: CARD_PITCH,
+      // Group drinking mate: right edge at yaw -21°, heads at pitch +20°
+      // (closer to the camera, so lower).
+      yaw: 7,
+      pitch: 4,
       widthDeg: CARD_WIDTH_DEG,
     },
     cleanMs: 8000,
